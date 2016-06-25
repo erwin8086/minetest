@@ -583,6 +583,22 @@ minetest.register_chatcommand("test1", {
 	end,
 })
 
+minetest.register_chatcommand("text", {
+	params = "",
+	description = "Give a ItemStack with custom Text",
+	func = function(name, param)
+		local player = minetest.get_player_by_name(name)
+		if not player then
+			return
+		end
+		local inv = player:get_inventory()
+		local data = minetest.write_json({infotext=param})
+		local stack = ItemStack("default:stick 10")
+		stack:set_metadata(data)
+		inv:add_item("main", stack)
+	end,
+})
+
 minetest.register_on_player_receive_fields(function(player, formname, fields)
 	experimental.print_to_everything("Inventory fields 1: player="..player:get_player_name()..", fields="..dump(fields))
 end)

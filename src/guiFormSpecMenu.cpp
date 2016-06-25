@@ -52,6 +52,7 @@ with this program; if not, write to the Free Software Foundation, Inc.,
 #include "util/string.h" // for parseColorString()
 #include "irrlicht_changes/static_text.h"
 #include "guiscalingfilter.h"
+#include "json/json.h"
 
 #if USE_FREETYPE && IRRLICHT_VERSION_MAJOR == 1 && IRRLICHT_VERSION_MINOR < 9
 #include "intlGUIEditBox.h"
@@ -2234,13 +2235,13 @@ void GUIFormSpecMenu::drawList(const ListDrawSpec &s, int phase,
 					std::istringstream stream(metadata);
 					if(reader.parse(stream, root))
 					{
-						if(root["infotext"] != null)
+						if(root["infotext"] != Json::Value::null)
 						{
-							customText = root.get("infotext").asString();
+							customText = "\n" + root["infotext"].asString();
 						}
 					}
 				}
-				tooltip_text = utf8_to_wide(item.getDefinition(m_gamedef->idef()).description + "\n" + customText);
+				tooltip_text = utf8_to_wide(item.getDefinition(m_gamedef->idef()).description + customText);
 			}
 			if (tooltip_text != L"") {
 				std::vector<std::wstring> tt_rows = str_split(tooltip_text, L'\n');
@@ -2253,7 +2254,7 @@ void GUIFormSpecMenu::drawList(const ListDrawSpec &s, int phase,
 #if IRRLICHT_VERSION_MAJOR <= 1 && IRRLICHT_VERSION_MINOR <= 8 && IRRLICHT_VERSION_REVISION < 2
 				s32 tooltip_height = m_tooltip_element->getTextHeight() * tt_rows.size() + 5;
 #else
-				s32 tooltip_height = m_tooltip_element->getTextHeight() + 5;
+				s32 tooltip_height = m_tooltip_element->getTextHeight() * tt_rows.size() +  5;
 #endif
 				v2u32 screenSize = driver->getScreenSize();
 				int tooltip_offset_x = m_btn_height;
