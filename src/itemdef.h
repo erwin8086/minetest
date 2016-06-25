@@ -86,6 +86,7 @@ struct ItemDefinition
 	void reset();
 	void serialize(std::ostream &os, u16 protocol_version) const;
 	void deSerialize(std::istream &is);
+	bool customTooltip;
 private:
 	void resetInitial();
 };
