@@ -2226,7 +2226,21 @@ void GUIFormSpecMenu::drawList(const ListDrawSpec &s, int phase,
 			// Draw tooltip
 			std::wstring tooltip_text = L"";
 			if (hovering && !m_selected_item) {
-				tooltip_text = utf8_to_wide(item.getDefinition(m_gamedef->idef()).description);
+				std::string customText = "";
+				std::string metadata = item.metadata;
+				{
+					Json::Value root;
+					Json::Reader reader;
+					std::istringstream stream(metadata);
+					if(reader.parse(stream, root))
+					{
+						if(root["infotext"] != null)
+						{
+							customText = root.get("infotext").asString();
+						}
+					}
+				}
+				tooltip_text = utf8_to_wide(item.getDefinition(m_gamedef->idef()).description + "\n" + customText);
 			}
 			if (tooltip_text != L"") {
 				std::vector<std::wstring> tt_rows = str_split(tooltip_text, L'\n');
